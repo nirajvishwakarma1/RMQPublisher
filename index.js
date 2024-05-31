@@ -1,29 +1,29 @@
-const RabbitMQConnection = require('./src/connection/RabbitMQConnection')
-const { getUserData } = require('./src/utils/get-user-data')
+const RabbitmqService = require('./services/rabbitmqService')
+const UserController = require('./controllers/userController')
 
 ;(async _ => {
-    const rabbitMQConnection = new RabbitMQConnection()
+    const rabbitmqService = new RabbitmqService()
+    const userController = new UserController()
     try {
         // Connect to RabbitMQ
-        await rabbitMQConnection.connect()
+        await rabbitmqService.connect()
     
         // Publish a message
-        const users = await getUserData({synced: 0}, 2)
-    
-        const queue = 'persons'
+        const users = await userController.getUsers({synced: 0}, 2)
+        const queueName = 'persons'
     
         if (Array.isArray(users)) {
             for (user of users) {
                 const message = JSON.stringify(user)
-                await rabbitMQConnection.publishMessage(queue, message)
+                await rabbitmqService.publishMessage(queueName, message)
             }
         } else {
             const message = JSON.stringify(users)
-            await rabbitMQConnection.publishMessage(queue, message)
+            await rabbitmqService.publishMessage(queueName, message)
         }
     } catch (error) {
         console.error(error)
     } finally {
-        await rabbitMQConnection.close()
+        await rabbitmqService.close()
     }
 })()

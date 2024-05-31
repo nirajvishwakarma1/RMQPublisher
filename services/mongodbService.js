@@ -1,13 +1,10 @@
 const { MongoClient } = require('mongodb')
-require('dotenv').config()
+const { mongoUri, mongoDB } = require('../config/db')
 
-class MongoDBConnection  {
-    constructor(
-        uri = process.env.MONGODB_URI,
-        dbName = process.env.MONGODB_NAME
-    ) {
-        this.uri = uri
-        this.dbName = dbName
+class MongoDBService  {
+    constructor() {
+        this.uri = mongoUri
+        this.dbName = mongoDB
         this.client = new MongoClient(this.uri)
     }
 
@@ -62,4 +59,4 @@ class MongoDBConnection  {
     }
 }
 
-module.exports = MongoDBConnection
+module.exports = MongoDBService
